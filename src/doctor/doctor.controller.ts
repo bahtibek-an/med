@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Req } from '@nestjs/common';
 import { DoctorService } from './doctor.service';
 import { CreateDoctorDto } from './dto/create-doctor.dto';
 import { UpdateDoctorDto } from './dto/update-doctor.dto';
@@ -7,6 +7,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { v4 as uuidv4 } from "uuid";
 import { getStaticFilePath } from '../../configs/path.config';
+import { Request } from 'express';
 
 @Controller('doctor')
 export class DoctorController {
@@ -44,8 +45,12 @@ export class DoctorController {
   }
 
   @Get()
-  findAll() {
-    return this.doctorService.findAll();
+  findAll(@Req() request: Request) {
+    const protocol = request.protocol;
+    const host = request.get('host');
+    const fullUrl = `${protocol}://${host}/static/`;
+
+    return this.doctorService.findAll(fullUrl);
   }
 
   @Get(':id')

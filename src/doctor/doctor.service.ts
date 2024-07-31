@@ -19,8 +19,9 @@ export class DoctorService {
     return this.doctorRepository.save(doctor);
   }
 
-  findAll() {
-    return this.doctorRepository.find();
+  async findAll(fullUrl: string) {
+    const doctors = await this.doctorRepository.find();
+    return doctors.map((doctor) => ({ ...doctor, avatar: fullUrl + doctor.avatar }))
   }
 
   findOne(id: number) {
