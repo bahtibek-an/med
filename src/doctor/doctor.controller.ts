@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 import { getStaticFilePath } from '../../configs/path.config';
 import { Request } from 'express';
 
-@Controller('doctor')
+@Controller('doctors')
 export class DoctorController {
   constructor(private readonly doctorService: DoctorService) {
   }
@@ -39,7 +39,6 @@ export class DoctorController {
     @UploadedFile() image: Express.Multer.File,
     @Body() createDoctorDto: CreateDoctorDto
   ) {
-    console.log(createDoctorDto);
     const imageName = image.filename;
     return this.doctorService.create({ ...createDoctorDto, avatar: imageName });
   }

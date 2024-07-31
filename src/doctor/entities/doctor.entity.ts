@@ -1,4 +1,15 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { DoctorSchedule } from './doctor-schedule.entity';
+
+export enum DoctorScheduleDays {
+  MONDAY = "MONDAY",
+  TUESDAY = "TUESDAY",
+  WEDNESDAY = "WEDNESDAY",
+  THURSDAY = "THURSDAY",
+  FRIDAY = "FRIDAY",
+  SATURDAY = "SATURDAY",
+  SUNDAY = "SUNDAY",
+}
 
 @Entity('Doctor')
 export class Doctor {
@@ -23,9 +34,12 @@ export class Doctor {
   @Column({ type: 'varchar', length: 255 })
   latitude: string;
 
-  @Column('simple-json', { nullable: true })
-  schedule: { day: string, startTime: string, endTime: string };
+  @OneToMany(() => DoctorSchedule, (doctorSchedule) => doctorSchedule.doctor, { cascade: true })
+  schedules: DoctorSchedule[];
 
   @Column({ type: 'varchar', length: 255 })
   avatar: string;
+
+  @Column({ type: 'decimal', default: 0 })
+  cost: number;
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDoctorDto } from './dto/create-doctor.dto';
 import { UpdateDoctorDto } from './dto/update-doctor.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,6 +11,8 @@ export class DoctorService {
   constructor(
     @InjectRepository(Doctor)
     private readonly doctorRepository: Repository<Doctor>,
+    @InjectRepository(DoctorSchedule)
+    private readonly doctorScheduleRepository: Repository<DoctorSchedule>,
   ) {
   }
 
@@ -20,12 +22,31 @@ export class DoctorService {
   }
 
   async findAll(fullUrl: string) {
-    const doctors = await this.doctorRepository.find();
-    return doctors.map((doctor) => ({ ...doctor, avatar: fullUrl + doctor.avatar }))
+    const doctors = await this.doctorRepository.find({ relations: ['schedules'] });
+    return doctors.map((doctor) => ({ ...doctor, avatar: fullUrl + doctor.avatar }));
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} doctor`;
+  async findOne(id: number) {
+    const doctor = await this.doctorRepository.findOne({
+      where: {
+        id: id
+      },
+      relations: ['schedules']
+    });
+    if(!doctor) {
+      throw new NotFoundException("Doctor does not exist");
+    }
+    return doctor;
+  }
+
+  async findScheduleByDoctorId(doctorId: number) {
+    return this.doctorScheduleRepository.find({
+      where: {
+        doctor: {
+          id: doctorId,
+        },
+      },
+    });
   }
 
   update(id: number, updateDoctorDto: UpdateDoctorDto) {
@@ -33,6 +54,6 @@ export class DoctorService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} doctor`;
+    return this.doctorRepository.delete(id);
   }
 }

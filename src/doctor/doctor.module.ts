@@ -11,5 +11,6 @@ import { DoctorSchedule } from './entities/doctor-schedule.entity';
   ],
   controllers: [DoctorController],
   providers: [DoctorService],
+  exports: [DoctorService]
 })
 export class DoctorModule {}

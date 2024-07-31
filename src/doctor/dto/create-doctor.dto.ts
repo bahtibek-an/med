@@ -1,16 +1,16 @@
-import { IsBase64, IsDate, IsEmail, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
+import { DoctorScheduleDays } from '../entities/doctor.entity';
 
 export class ScheduleDto {
-  @IsOptional()
-  @IsString()
-  day: string;
+  @IsEnum(DoctorScheduleDays)
+  day: DoctorScheduleDays;
 
   @IsString()
-  startDate: string;
+  startTime: string;
 
   @IsString()
-  endDate: string;
+  endTime: string;
 }
 
 export class CreateDoctorDto {
@@ -29,12 +29,15 @@ export class CreateDoctorDto {
   @IsString()
   latitude: string;
 
-  @ValidateNested()
-  @IsObject()
+  @ValidateNested({ each: true })
+  @IsArray()
   @Type(() => ScheduleDto)
-  schedule: ScheduleDto;
+  schedules: ScheduleDto[];
 
   @IsOptional()
   @IsString()
   avatar: string;
+
+  @IsString()
+  cost: number;
 }

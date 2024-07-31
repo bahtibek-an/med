@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
-import { Doctor } from '../../doctor/entities/doctor.entity';
+import { Doctor, DoctorScheduleDays } from '../../doctor/entities/doctor.entity';
 
 @Entity("Appointment")
 export class Appointment {
@@ -13,8 +13,8 @@ export class Appointment {
   @ManyToOne(() => Doctor)
   doctor: Doctor;
 
-  @Column()
-  date: string;
+  @Column({ enum: DoctorScheduleDays })
+  date: DoctorScheduleDays;
 
   @Column()
   time: string;

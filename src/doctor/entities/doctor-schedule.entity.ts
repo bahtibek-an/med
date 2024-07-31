@@ -1,16 +1,20 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Doctor, DoctorScheduleDays } from './doctor.entity';
 
 @Entity("DoctorSchedule")
 export class DoctorSchedule {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ enum: DoctorScheduleDays })
   day: string;
 
-  @Column({ type: 'date'})
-  startDate: string;
+  @Column({ type: 'varchar'})
+  startTime: string;
 
-  @Column({ type: 'date' })
-  endDate: string;
+  @Column({ type: 'varchar' })
+  endTime: string;
+
+  @ManyToOne(() => Doctor, (doctor) => doctor.schedules)
+  doctor: Doctor
 }
