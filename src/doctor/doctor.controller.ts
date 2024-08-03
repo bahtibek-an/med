@@ -47,7 +47,7 @@ export class DoctorController {
   findAll(@Req() request: Request) {
     const protocol = request.protocol;
     const host = request.get('host');
-    const fullUrl = `${protocol}://${host}/static/`;
+    const fullUrl = `https://${host}/static/`;
 
     return this.doctorService.findAll(fullUrl);
   }
