@@ -1,7 +1,6 @@
 import {
   IsArray,
   IsEnum,
-  IsNumber,
   IsOptional,
   IsString,
   ValidateNested,
@@ -14,6 +13,7 @@ import {
 import { Type } from 'class-transformer';
 import { DoctorScheduleDays } from '../entities/doctor.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsTime } from '../../../custom-validators/file-validator';
 
 @ValidatorConstraint({ async: false })
 class UniqueScheduleDaysConstraint implements ValidatorConstraintInterface {
@@ -44,11 +44,13 @@ export class DailySchedule {
   @ApiProperty()
 
   @IsString()
+  @IsTime({ message: 'Start time must be in the format HH:MM' })
   startTime: string;
 
   @ApiProperty()
 
   @IsString()
+  @IsTime({ message: 'End time must be in the format HH:MM' })
   endTime: string;
 }
 

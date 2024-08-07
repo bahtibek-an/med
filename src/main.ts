@@ -6,7 +6,9 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true
+  });
   app.useGlobalPipes(new ValidationPipe());
   app.useStaticAssets(getStaticFilePath(), {
     prefix: "/static/"
