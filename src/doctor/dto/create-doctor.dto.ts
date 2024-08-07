@@ -14,7 +14,6 @@ import {
 import { Type } from 'class-transformer';
 import { DoctorScheduleDays } from '../entities/doctor.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { HasMimeType, MaxFileSize, IsFile } from 'nestjs-form-data';
 
 @ValidatorConstraint({ async: false })
 class UniqueScheduleDaysConstraint implements ValidatorConstraintInterface {
