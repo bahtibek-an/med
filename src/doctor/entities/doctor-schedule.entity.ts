@@ -1,7 +1,8 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Doctor, DoctorScheduleDays } from './doctor.entity';
 
-@Entity("DoctorSchedule")
+
+@Entity('DoctorSchedule')
 export class DoctorSchedule {
   @PrimaryGeneratedColumn()
   id: number;
@@ -9,12 +10,9 @@ export class DoctorSchedule {
   @Column({ enum: DoctorScheduleDays })
   day: string;
 
-  @Column({ type: 'varchar'})
-  startTime: string;
+  @Column({ type: 'simple-json', default: [] })
+  dailySchedule: { startTime: string, endTime: string }[];
 
-  @Column({ type: 'varchar' })
-  endTime: string;
-
-  @ManyToOne(() => Doctor, (doctor) => doctor.schedules)
-  doctor: Doctor
+  @ManyToOne(() => Doctor, (doctor) => doctor.schedules, { onDelete: 'CASCADE' })
+  doctor: Doctor;
 }

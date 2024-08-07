@@ -1,43 +1,106 @@
-import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+  registerDecorator,
+  ValidationArguments,
+  ValidationOptions,
+  ValidatorConstraint,
+  ValidatorConstraintInterface,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { DoctorScheduleDays } from '../entities/doctor.entity';
+import { ApiProperty } from '@nestjs/swagger';
+import { HasMimeType, MaxFileSize, IsFile } from 'nestjs-form-data';
 
-export class ScheduleDto {
-  @IsEnum(DoctorScheduleDays)
-  day: DoctorScheduleDays;
+@ValidatorConstraint({ async: false })
+class UniqueScheduleDaysConstraint implements ValidatorConstraintInterface {
+  validate(schedules: ScheduleDto[], args: ValidationArguments) {
+    const days = schedules.map(schedule => schedule.day);
+    const uniqueDays = new Set(days);
+    return uniqueDays.size === days.length;
+  }
+
+  defaultMessage(args: ValidationArguments) {
+    return 'Each day in the schedule must be unique';
+  }
+}
+
+function UniqueScheduleDays(validationOptions?: ValidationOptions) {
+  return function(object: Object, propertyName: string) {
+    registerDecorator({
+      target: object.constructor,
+      propertyName: propertyName,
+      options: validationOptions,
+      constraints: [],
+      validator: UniqueScheduleDaysConstraint,
+    });
+  };
+}
+
+export class DailySchedule {
+  @ApiProperty()
 
   @IsString()
   startTime: string;
+
+  @ApiProperty()
 
   @IsString()
   endTime: string;
 }
 
-export class CreateDoctorDto {
-  @IsString()
-  fullName: string;
+export class ScheduleDto {
+  @ApiProperty({ enum: DoctorScheduleDays })
+  @IsEnum(DoctorScheduleDays)
+  day: DoctorScheduleDays;
 
-  @IsString()
-  specialization: string;
-
-  @IsString()
-  description: string;
-
-  @IsString()
-  longitude: string;
-
-  @IsString()
-  latitude: string;
+  @ApiProperty({ type: [DailySchedule] })
 
   @ValidateNested({ each: true })
   @IsArray()
-  @Type(() => ScheduleDto)
-  schedules: ScheduleDto[];
+  @Type(() => DailySchedule)
+  dailySchedule: DailySchedule[];
+}
+
+export class CreateDoctorDto {
+  @ApiProperty()
+  @IsString()
+  fullName: string;
+
+  @ApiProperty()
+  @IsString()
+  specialization: string;
+
+  @ApiProperty()
+  @IsString()
+  description: string;
+
+  @ApiProperty()
+  @IsString()
+  longitude: string;
+
+  @ApiProperty()
+  @IsString()
+  latitude: string;
+
+
+  // @ApiProperty({ type: [ScheduleDto], required: false })
 
   @IsOptional()
-  @IsString()
+  @ValidateNested({ each: true })
+  @IsArray()
+  @Type(() => ScheduleDto)
+  @UniqueScheduleDays({ message: 'Each day in the schedule must be unique' })
+  schedules: ScheduleDto[];
+
+  @ApiProperty({ type: 'string', format: 'binary' })
   avatar: string;
 
+  @ApiProperty()
   @IsString()
   cost: number;
 }

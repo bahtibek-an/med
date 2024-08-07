@@ -1,14 +1,14 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { DoctorSchedule } from './doctor-schedule.entity';
 
 export enum DoctorScheduleDays {
-  MONDAY = "MONDAY",
-  TUESDAY = "TUESDAY",
-  WEDNESDAY = "WEDNESDAY",
-  THURSDAY = "THURSDAY",
-  FRIDAY = "FRIDAY",
-  SATURDAY = "SATURDAY",
-  SUNDAY = "SUNDAY",
+  MONDAY = 'MONDAY',
+  TUESDAY = 'TUESDAY',
+  WEDNESDAY = 'WEDNESDAY',
+  THURSDAY = 'THURSDAY',
+  FRIDAY = 'FRIDAY',
+  SATURDAY = 'SATURDAY',
+  SUNDAY = 'SUNDAY',
 }
 
 @Entity('Doctor')
@@ -34,7 +34,7 @@ export class Doctor {
   @Column({ type: 'varchar', length: 255 })
   latitude: string;
 
-  @OneToMany(() => DoctorSchedule, (doctorSchedule) => doctorSchedule.doctor, { cascade: true })
+  @OneToMany(() => DoctorSchedule, (doctorSchedule) => doctorSchedule.doctor, { cascade: true, onDelete: 'CASCADE' })
   schedules: DoctorSchedule[];
 
   @Column({ type: 'varchar', length: 255 })

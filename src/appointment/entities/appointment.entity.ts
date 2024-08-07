@@ -10,7 +10,7 @@ export class Appointment {
   @ManyToOne(() => User)
   user: User;
 
-  @ManyToOne(() => Doctor)
+  @ManyToOne(() => Doctor, { onDelete: 'CASCADE' })
   doctor: Doctor;
 
   @Column({ enum: DoctorScheduleDays })
