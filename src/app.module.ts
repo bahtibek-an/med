@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { ClinicModule } from './clinic/clinic.module';
 import { AuthGuard } from './auth/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { JwtModule } from '@nestjs/jwt';
     PaymentsModule,
     AuthModule,
     ClinicModule,
+    UploadModule,
   ],
   providers: [AuthGuard],
   controllers: [],

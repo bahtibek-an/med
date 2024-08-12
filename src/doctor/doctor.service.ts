@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Doctor } from './entities/doctor.entity';
 import { DoctorSchedule } from './entities/doctor-schedule.entity';
-import { DoctorDto } from './dto/doctor.dto';
 
 @Injectable()
 export class DoctorService {
@@ -18,26 +17,25 @@ export class DoctorService {
   }
 
   create(createDoctorDto: CreateDoctorDto) {
-    const doctor = this.doctorRepository.create(createDoctorDto);
+    const doctor = this.doctorRepository.create({ ...createDoctorDto, avatar: createDoctorDto.avatar?.[0]?.url });
     return this.doctorRepository.save(doctor);
   }
 
-  async findAll(fullUrl: string) {
-    const doctors = await this.doctorRepository.find({ relations: ['schedules'] });
-    return doctors.map((doctor) => ({ ...doctor, avatar: fullUrl + doctor.avatar }));
+  async findAll() {
+    return await this.doctorRepository.find({ relations: ['schedules'] });
   }
 
-  async findOne(id: number, fullUrl: string) {
+  async findOne(id: number) {
     const doctor = await this.doctorRepository.findOne({
       where: {
-        id: id
+        id: id,
       },
-      relations: ['schedules']
+      relations: ['schedules'],
     });
-    if(!doctor) {
-      throw new NotFoundException("Doctor does not exist");
+    if (!doctor) {
+      throw new NotFoundException('Doctor does not exist');
     }
-    return { ...doctor, avatar: fullUrl + doctor.avatar };
+    return doctor;
   }
 
   async findScheduleByDoctorId(doctorId: number) {
@@ -51,9 +49,11 @@ export class DoctorService {
   }
 
   update(id: number, updateDoctorDto: UpdateDoctorDto) {
+    const avatarUrl = updateDoctorDto.avatar ? updateDoctorDto.avatar?.[0]?.url : undefined;
     const doctor = this.doctorRepository.create({
       id: id,
       ...updateDoctorDto,
+      avatar: avatarUrl,
     });
     return this.doctorRepository.save(doctor);
   }
@@ -65,7 +65,7 @@ export class DoctorService {
   updateScheduleById(id: number, updateScheduleDoctorDto: UpdateScheduleDoctorDto[]) {
     const doctor = this.doctorRepository.create({
       id: id,
-      schedules: updateScheduleDoctorDto
+      schedules: updateScheduleDoctorDto,
     });
     return this.doctorRepository.save(doctor);
   }

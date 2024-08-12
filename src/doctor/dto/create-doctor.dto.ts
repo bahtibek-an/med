@@ -8,12 +8,13 @@ import {
   ValidationArguments,
   ValidationOptions,
   ValidatorConstraint,
-  ValidatorConstraintInterface,
+  ValidatorConstraintInterface, IsNumber,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { DoctorScheduleDays } from '../entities/doctor.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsTime } from '../../../custom-validators/file-validator';
+import { UploadDto } from '../../upload/dto/upload.dto';
 
 @ValidatorConstraint({ async: false })
 class UniqueScheduleDaysConstraint implements ValidatorConstraintInterface {
@@ -80,16 +81,7 @@ export class CreateDoctorDto {
   @IsString()
   description: string;
 
-  @ApiProperty()
-  @IsString()
-  longitude: string;
-
-  @ApiProperty()
-  @IsString()
-  latitude: string;
-
-
-  // @ApiProperty({ type: [ScheduleDto], required: false })
+  @ApiProperty({ type: [ScheduleDto], required: false })
 
   @IsOptional()
   @ValidateNested({ each: true })
@@ -98,10 +90,10 @@ export class CreateDoctorDto {
   @UniqueScheduleDays({ message: 'Each day in the schedule must be unique' })
   schedules: ScheduleDto[];
 
-  @ApiProperty({ type: 'string', format: 'binary' })
-  avatar: string;
+  @ApiProperty({ type: [UploadDto] })
+  avatar: UploadDto[];
 
   @ApiProperty()
-  @IsString()
+  @IsNumber()
   cost: number;
 }

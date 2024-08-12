@@ -28,12 +28,6 @@ export class Doctor {
   @Column({ type: 'decimal', default: 0 })
   rating: number;
 
-  @Column({ type: 'varchar', length: 255 })
-  longitude: string;
-
-  @Column({ type: 'varchar', length: 255 })
-  latitude: string;
-
   @OneToMany(() => DoctorSchedule, (doctorSchedule) => doctorSchedule.doctor, { cascade: true, onDelete: 'CASCADE' })
   schedules: DoctorSchedule[];
 
